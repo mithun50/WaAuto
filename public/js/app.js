@@ -34,7 +34,7 @@ document.querySelectorAll('.nav-link').forEach((link) => {
 
 // ---- Socket.IO events ----
 socket.on('status', (data) => {
-  updateConnectionStatus(data.status, data.info);
+  updateConnectionStatus(data.status, data.info, data.error);
 });
 
 socket.on('qr', (qrDataUrl) => {
@@ -80,7 +80,7 @@ socket.on('message_received', () => {
 });
 
 // ---- Connection status ----
-function updateConnectionStatus(status, info) {
+function updateConnectionStatus(status, info, error) {
   const badge = document.getElementById('connection-badge');
   badge.className = `badge ${status === 'qr' ? 'scanning' : status}`;
   badge.textContent = status === 'qr' ? 'Scanning...' : status === 'connected' ? 'Connected' : 'Disconnected';
@@ -96,6 +96,13 @@ function updateConnectionStatus(status, info) {
     document.getElementById('qr-container').style.display = 'none';
     document.getElementById('connected-info').style.display = 'none';
     document.getElementById('disconnected-info').style.display = 'block';
+    const errEl = document.getElementById('init-error');
+    if (error) {
+      errEl.textContent = error;
+      errEl.style.display = 'block';
+    } else {
+      errEl.style.display = 'none';
+    }
   }
 }
 
