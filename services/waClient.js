@@ -1,4 +1,5 @@
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
+const puppeteer = require('puppeteer');
 const QRCode = require('qrcode');
 const path = require('path');
 const { stmts } = require('../database');
@@ -47,6 +48,7 @@ function initialize(socketIo) {
     authStrategy: new LocalAuth({ dataPath: path.join(__dirname, '..', 'data', 'wa-session') }),
     puppeteer: {
       headless: true,
+      executablePath: puppeteer.executablePath(),
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
