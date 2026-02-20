@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WA Auto - WhatsApp Automation Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">
+      <h2>WA Auto</h2>
+    </div>
+    <nav>
+      <a href="#" class="nav-link active" data-tab="dashboard">Dashboard</a>
+      <a href="#" class="nav-link" data-tab="bulk">Bulk Messaging</a>
+      <a href="#" class="nav-link" data-tab="autoreply">Auto-Reply Bot</a>
+      <a href="#" class="nav-link" data-tab="scheduler">Scheduler</a>
+      <a href="#" class="nav-link" data-tab="logs">Message Logs</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="connection-badge" class="badge disconnected">Disconnected</div>
+    </div>
+  </div>
+
+  <main class="content">
+    <!-- Dashboard Tab -->
+    <section id="tab-dashboard" class="tab active">
+      <h1>Dashboard</h1>
+      <div class="card-row">
+        <div class="card">
+          <h3>Connection Status</h3>
+          <div id="status-area">
+            <div id="qr-container" style="display:none;">
+              <p>Scan QR code with WhatsApp:</p>
+              <img id="qr-image" alt="QR Code">
+            </div>
+            <div id="connected-info" style="display:none;">
+              <p class="status-connected">Connected</p>
+              <p><strong>Name:</strong> <span id="info-name">-</span></p>
+              <p><strong>Phone:</strong> <span id="info-phone">-</span></p>
+              <p><strong>Platform:</strong> <span id="info-platform">-</span></p>
+              <button id="btn-logout" class="btn btn-danger">Logout</button>
+            </div>
+            <div id="disconnected-info">
+              <p class="status-disconnected">Disconnected</p>
+              <p>Waiting for WhatsApp client to initialize...</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Statistics</h3>
+          <div class="stats-grid">
+            <div class="stat">
+              <span class="stat-value" id="stat-total">0</span>
+              <span class="stat-label">Total Messages</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="stat-sent">0</span>
+              <span class="stat-label">Sent</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="stat-received">0</span>
+              <span class="stat-label">Received</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="stat-failed">0</span>
+              <span class="stat-label">Failed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bulk Messaging Tab -->
+    <section id="tab-bulk" class="tab">
+      <h1>Bulk Messaging</h1>
+      <div class="card">
+        <form id="bulk-form">
+          <div class="form-group">
+            <label for="bulk-phones">Phone Numbers (one per line, with country code)</label>
+            <textarea id="bulk-phones" rows="6" placeholder="919876543210&#10;918765432109&#10;917654321098"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="bulk-message">Message</label>
+            <textarea id="bulk-message" rows="4" placeholder="Type your message here..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bulk-media">Attach Media (optional)</label>
+              <input type="file" id="bulk-media" accept="image/*,video/*,application/pdf">
+            </div>
+            <div class="form-group">
+              <label for="bulk-delay">Delay between messages (ms)</label>
+              <input type="number" id="bulk-delay" value="3000" min="1000" max="30000">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Bulk Messages</button>
+        </form>
+      </div>
+      <div id="bulk-progress-area" class="card" style="display:none;">
+        <h3>Sending Progress</h3>
+        <div class="progress-bar">
+          <div id="bulk-progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="progress-stats">
+          <span>Sent: <strong id="bp-sent">0</strong></span>
+          <span>Failed: <strong id="bp-failed">0</strong></span>
+          <span>Remaining: <strong id="bp-remaining">0</strong></span>
+        </div>
+        <p id="bp-current">Current: -</p>
+      </div>
+    </section>
+
+    <!-- Auto-Reply Tab -->
+    <section id="tab-autoreply" class="tab">
+      <h1>Auto-Reply Bot</h1>
+      <div class="card">
+        <div class="flex-between">
+          <h3>Bot Status</h3>
+          <label class="toggle">
+            <input type="checkbox" id="autoreply-toggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Add Rule</h3>
+        <form id="rule-form">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="rule-keyword">Keyword / Trigger</label>
+              <input type="text" id="rule-keyword" placeholder="hello" required>
+            </div>
+            <div class="form-group">
+              <label for="rule-mode">Match Mode</label>
+              <select id="rule-mode">
+                <option value="contains">Contains</option>
+                <option value="exact">Exact Match</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rule-reply">Reply Message</label>
+            <textarea id="rule-reply" rows="3" placeholder="Hi! Thanks for reaching out." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Rule</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Active Rules</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Keyword</th>
+              <th>Reply</th>
+              <th>Mode</th>
+              <th>Enabled</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rules-table-body">
+            <tr><td colspan="5" class="empty-row">No rules configured</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Scheduler Tab -->
+    <section id="tab-scheduler" class="tab">
+      <h1>Message Scheduler</h1>
+      <div class="card">
+        <h3>Schedule New Message</h3>
+        <form id="schedule-form">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="sched-phone">Phone Number (with country code)</label>
+              <input type="text" id="sched-phone" placeholder="919876543210" required>
+            </div>
+            <div class="form-group">
+              <label for="sched-datetime">Date &amp; Time</label>
+              <input type="datetime-local" id="sched-datetime" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="sched-message">Message</label>
+            <textarea id="sched-message" rows="3" placeholder="Your scheduled message..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Schedule Message</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Scheduled Messages</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Phone</th>
+              <th>Message</th>
+              <th>Scheduled At</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="scheduled-table-body">
+            <tr><td colspan="5" class="empty-row">No scheduled messages</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Message Logs Tab -->
+    <section id="tab-logs" class="tab">
+      <h1>Message Logs</h1>
+      <div class="card">
+        <div class="flex-between">
+          <h3>Recent Messages</h3>
+          <button id="btn-refresh-logs" class="btn btn-sm">Refresh</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Phone</th>
+              <th>Message</th>
+              <th>Direction</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="logs-table-body">
+            <tr><td colspan="6" class="empty-row">No logs yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

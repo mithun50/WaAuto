@@ -1,0 +1,26 @@
+{
+  "name": "waauto",
+  "version": "1.0.0",
+  "description": "WhatsApp Automation Tool with Web Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'No build step needed'"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["whatsapp", "automation", "bot"],
+  "author": "Mithun Gowda B <mithungowda.b7411@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.0",
+    "whatsapp-web.js": "^1.26.0"
+  }
+}
